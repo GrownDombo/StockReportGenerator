@@ -10,10 +10,16 @@ import yaml
 from fetchers.market_data import fetch_quote
 from processors.calendar_utils import get_previous_business_day
 from renderers.html_renderer import render_report, save_report
+from validators.data_validator import validate_against_naver
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="주식 시장 HTML 리포트 생성기")
+    parser.add_argument(
+        "--validate",
+        action="store_true",
+        help="국내 지수(KS11/KQ11) 종가를 NAVER 소스와 비교 검증",
+    )
     parser.add_argument(
         "--date",
         dest="report_date",
@@ -87,6 +93,22 @@ def fetch_items(items: list[dict], base_day, decimals: int) -> list[dict]:
     ]
 
 
+
+
+def run_validation(config: dict, base_day, tolerance_pct: float):
+    results = []
+    for item in config["markets"].get("korea_indices", []):
+        r = validate_against_naver(item.get("display_name", item["symbol"]), item["symbol"], base_day, tolerance_pct=tolerance_pct)
+        results.append(r)
+
+    print("\n[검증] NAVER 대비 종가 검증 결과")
+    for r in results:
+        if r.diff_pct is None:
+            print(f"- {r.name}({r.symbol}): 검증 불가 (데이터 없음)")
+        else:
+            status = "PASS" if r.passed else "FAIL"
+            print(f"- {r.name}({r.symbol}): {status} | FDR={r.fdr_close:,.2f}, NAVER={r.naver_close:,.2f}, diff={r.diff_pct:.4f}%")
+
 def main() -> None:
     args = parse_args()
 
@@ -97,12 +119,17 @@ def main() -> None:
     tz_name = config["report"].get("timezone", "Asia/Seoul")
     output_dir = config["report"].get("output_dir", "output")
     max_dated_files = config["report"].get("max_dated_files", 90)
+    validation_tolerance_pct = config["report"].get("validation_tolerance_pct", 0.3)
 
     base_day = resolve_base_day(args.report_date, tz_name)
+
+    if args.validate:
+        run_validation(config, base_day, validation_tolerance_pct)
 
     context = {
         "report_date": base_day.strftime("%Y-%m-%d"),
         "generated_at": datetime.now(ZoneInfo(tz_name)).strftime("%Y-%m-%d %H:%M:%S"),
+        "validation_tolerance_pct": validation_tolerance_pct,
         "kr_indices": fetch_items(config["markets"]["korea_indices"], base_day, decimals),
         "us_indices": fetch_items(config["markets"]["us_indices"], base_day, decimals),
         "asia_indices": fetch_items(config["markets"].get("asia_indices", []), base_day, decimals),

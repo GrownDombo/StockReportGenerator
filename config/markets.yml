@@ -4,6 +4,7 @@ report:
   decimals: 2
   output_dir: output
   max_dated_files: 90
+  validation_tolerance_pct: 0.3
 
 markets:
   korea_indices:

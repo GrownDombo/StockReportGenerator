@@ -105,6 +105,7 @@ StockReportGenerator/
 - `decimals`: 숫자 소수점 자리수
 - `output_dir`: 리포트 저장 경로
 - `max_dated_files`: 날짜형 리포트 최대 보관 개수 (`latest.html` 제외)
+- `validation_tolerance_pct`: 검증 PASS 오차율 기준(기본 0.3%)
 
 `markets` / `assets` 섹션:
 - 실제 조회 심볼(`symbol`)과 UI 표시명(`display_name`)을 분리해 관리합니다.
@@ -136,6 +137,19 @@ python src/main.py --date 2026-05-20
 보관 정책:
 - 날짜형 파일이 `report.max_dated_files`를 초과하면 오래된 파일 자동 삭제
 - `latest.html`은 삭제 대상 제외
+
+
+### 데이터 정확도 검증(네이버 비교)
+국내 지수(코스피/코스닥)에 대해 FDR 기본 소스와 NAVER 소스 종가 차이를 검증할 수 있습니다.
+
+```bash
+python src/main.py --validate
+# 특정 날짜 검증
+python src/main.py --date 2026-05-20 --validate
+```
+
+- 검증 기준: 종가 차이율 0.3% 이내면 PASS
+- 네트워크/소스 제한 시 `검증 불가`가 표시될 수 있습니다.
 
 ---
 
