@@ -31,11 +31,14 @@ python src/main.py --date 2026-05-20
 - `output/YYYY-MM-DD.html`
 - `output/latest.html`
 
+또한 오래된 날짜 파일은 `report.max_dated_files` 값을 초과하면 자동 삭제됩니다(`latest.html` 제외).
+
 ## 설정
 `config/markets.yml`에서 수집 대상을 조정할 수 있습니다.
 - 지수/환율/상품 심볼
 - 표기명(`display_name`)
 - 소수점 자리수
+- output 보관 개수(`report.max_dated_files`, 기본 90개)
 
 ## 자동화
 `.github/workflows/daily-report.yml`은 아래처럼 동작합니다.

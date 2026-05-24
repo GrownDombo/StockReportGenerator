@@ -31,6 +31,33 @@ def resolve_base_day(report_date: str | None, tz_name: str):
     return get_previous_business_day(tz_name).date()
 
 
+def cleanup_old_reports(output_dir: str, max_dated_files: int) -> int:
+    if max_dated_files < 1:
+        return 0
+
+    out_dir = Path(output_dir)
+    if not out_dir.exists():
+        return 0
+
+    dated_files = []
+    for path in out_dir.glob("*.html"):
+        if path.name == "latest.html":
+            continue
+        try:
+            datetime.strptime(path.stem, "%Y-%m-%d")
+            dated_files.append(path)
+        except ValueError:
+            continue
+
+    dated_files.sort(key=lambda p: p.name, reverse=True)
+    files_to_delete = dated_files[max_dated_files:]
+
+    for old_file in files_to_delete:
+        old_file.unlink(missing_ok=True)
+
+    return len(files_to_delete)
+
+
 def fmt(value: float | None, digits: int = 2) -> str:
     if value is None:
         return "데이터 없음"
@@ -68,6 +95,7 @@ def main() -> None:
     decimals = config["report"].get("decimals", 2)
     tz_name = config["report"].get("timezone", "Asia/Seoul")
     output_dir = config["report"].get("output_dir", "output")
+    max_dated_files = config["report"].get("max_dated_files", 90)
 
     base_day = resolve_base_day(args.report_date, tz_name)
 
@@ -86,8 +114,10 @@ def main() -> None:
 
     save_report(html, output_dir, dated_name)
     save_report(html, output_dir, "latest.html")
+    removed_count = cleanup_old_reports(output_dir, max_dated_files)
 
     print(f"리포트 생성 완료: {output_dir}/{dated_name}")
+    print(f"보관 정책: 날짜별 파일 최대 {max_dated_files}개 유지, 이번 실행 삭제 {removed_count}개")
 
 
 if __name__ == "__main__":

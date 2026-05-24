@@ -37,78 +37,41 @@
       padding: 24px;
     }
 
-    h1 {
-      font-size: 38px;
-      margin: 0;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-    }
+    h1 { font-size: 38px; margin: 0; font-weight: 800; letter-spacing: -0.03em; }
+    .meta { margin-top: 8px; font-size: 14px; color: var(--muted); }
 
-    .meta {
-      margin-top: 8px;
-      font-size: 14px;
-      color: var(--muted);
-    }
+    .grid { margin-top: 18px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 
-    .grid {
-      margin-top: 18px;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
+    .section { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+    .section h2 { margin: 0; padding: 12px 14px; font-size: 21px; font-weight: 800; border-bottom: 1px solid var(--line); background: #fafbfd; letter-spacing: -0.02em; }
 
-    .section {
-      border: 1px solid var(--line);
-      border-radius: 12px;
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; border-top: 2px solid var(--line-strong); }
+    td { border: 1px solid var(--line); text-align: center; padding: 10px 8px; vertical-align: middle; }
+
+    .name { font-size: 18px; font-weight: 700; color: #374151; background: #fbfcfd; line-height: 1.2; word-break: keep-all; }
+
+    .value { padding: 8px 6px; }
+    .value-inner {
+      min-height: 62px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
       overflow: hidden;
-      background: #fff;
-    }
-
-    .section h2 {
-      margin: 0;
-      padding: 12px 14px;
-      font-size: 21px;
-      font-weight: 800;
-      border-bottom: 1px solid var(--line);
-      background: #fafbfd;
-      letter-spacing: -0.02em;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      border-top: 2px solid var(--line-strong);
-    }
-
-    td {
-      border: 1px solid var(--line);
-      text-align: center;
-      padding: 10px 8px;
-      vertical-align: middle;
-    }
-
-    .name {
-      font-size: 18px;
-      font-weight: 700;
-      color: #374151;
-      background: #fbfcfd;
-      line-height: 1.2;
-      word-break: keep-all;
-    }
-
-    .value {
-      font-size: 14px;
-      white-space: normal;
+      font-variant-numeric: tabular-nums;
     }
 
     .price {
       display: block;
-      font-size: 28px;
-      line-height: 1.05;
+      width: 100%;
+      font-size: clamp(24px, 3vw, 36px);
+      line-height: 1.1;
       font-weight: 800;
       letter-spacing: -0.02em;
-      word-break: break-word;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
 
     .change {
@@ -116,13 +79,16 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
-      margin-top: 6px;
-      font-size: 18px;
+      font-size: clamp(14px, 1.8vw, 19px);
       font-weight: 700;
       letter-spacing: -0.01em;
+      white-space: nowrap;
     }
 
-    .arrow { font-size: 13px; }
+    .cols-3 .price { font-size: clamp(19px, 2.2vw, 28px); }
+    .cols-3 .change { font-size: clamp(12px, 1.4vw, 16px); }
+
+    .arrow { font-size: 0.85em; }
     .up { color: var(--up); }
     .down { color: var(--down); }
     .flat { color: #8b95a1; }
@@ -138,8 +104,11 @@
       .grid { grid-template-columns: 1fr; gap: 12px; }
       .section h2 { font-size: 19px; }
       .name { font-size: 16px; }
-      .price { font-size: 22px; }
-      .change { font-size: 15px; }
+      .value-inner { min-height: 56px; }
+      .price { font-size: 24px; }
+      .cols-3 .price { font-size: 20px; }
+      .change { font-size: 14px; }
+      .cols-3 .change { font-size: 13px; }
     }
   </style>
 </head>
@@ -149,15 +118,15 @@
     <div class="meta">기준일 {{ report_date }} · 생성시각 {{ generated_at }}</div>
 
     <div class="grid">
-      <section class="section"><h2>국내</h2><table><tr>{% for item in kr_indices[:2] %}<td class="name">{{ item.name_ko }}</td>{% endfor %}</tr><tr>{% for item in kr_indices[:2] %}{% include 'value_cell.j2' %}{% endfor %}</tr></table></section>
+      <section class="section"><h2>국내</h2><table class="cols-2"><tr>{% for item in kr_indices[:2] %}<td class="name">{{ item.name_ko }}</td>{% endfor %}</tr><tr>{% for item in kr_indices[:2] %}{% include 'value_cell.j2' %}{% endfor %}</tr></table></section>
 
-      <section class="section"><h2>환율</h2><table><tr>{% for item in fx[:2] %}<td class="name">{{ item.name_ko }}</td>{% endfor %}</tr><tr>{% for item in fx[:2] %}{% include 'value_cell.j2' %}{% endfor %}</tr></table></section>
+      <section class="section"><h2>환율</h2><table class="cols-2"><tr>{% for item in fx[:2] %}<td class="name">{{ item.name_ko }}</td>{% endfor %}</tr><tr>{% for item in fx[:2] %}{% include 'value_cell.j2' %}{% endfor %}</tr></table></section>
 
-      <section class="section"><h2>미국</h2><table><tr>{% for item in us_indices[:3] %}<td class="name">{{ item.name_ko }}</td>{% endfor %}</tr><tr>{% for item in us_indices[:3] %}{% include 'value_cell.j2' %}{% endfor %}</tr></table></section>
+      <section class="section"><h2>미국</h2><table class="cols-3"><tr>{% for item in us_indices[:3] %}<td class="name">{{ item.name_ko }}</td>{% endfor %}</tr><tr>{% for item in us_indices[:3] %}{% include 'value_cell.j2' %}{% endfor %}</tr></table></section>
 
-      <section class="section"><h2>해외(아시아)</h2><table><tr>{% for item in asia_indices[:2] %}<td class="name">{{ item.name_ko }}</td>{% endfor %}</tr><tr>{% for item in asia_indices[:2] %}{% include 'value_cell.j2' %}{% endfor %}</tr></table></section>
+      <section class="section"><h2>해외(아시아)</h2><table class="cols-2"><tr>{% for item in asia_indices[:2] %}<td class="name">{{ item.name_ko }}</td>{% endfor %}</tr><tr>{% for item in asia_indices[:2] %}{% include 'value_cell.j2' %}{% endfor %}</tr></table></section>
 
-      <section class="section commodity full"><h2>상품</h2><table>{% for item in commodities %}<tr><td class="name">{{ item.name_ko }}</td>{% include 'value_cell.j2' %}</tr>{% endfor %}</table></section>
+      <section class="section commodity full"><h2>상품</h2><table class="cols-2">{% for item in commodities %}<tr><td class="name">{{ item.name_ko }}</td>{% include 'value_cell.j2' %}</tr>{% endfor %}</table></section>
     </div>
   </main>
 </body>

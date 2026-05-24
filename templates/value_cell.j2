@@ -1,12 +1,14 @@
 <td class="value {% if item.change_pct is none %}flat{% elif item.change_pct > 0 %}up{% elif item.change_pct < 0 %}down{% else %}flat{% endif %}">
-  {% if item.change_pct is none %}
-    <span class="price">{{ item.close }}</span>
-    <span class="change">데이터 없음</span>
-  {% else %}
-    <span class="price">{{ item.close }}</span>
-    <span class="change">
-      {% if item.change_pct > 0 %}<span class="arrow">▲</span>{% elif item.change_pct < 0 %}<span class="arrow">▼</span>{% else %}<span class="arrow">-</span>{% endif %}
-      {{ '%.2f'|format(item.change_pct|abs) }}%
-    </span>
-  {% endif %}
+  <div class="value-inner">
+    {% if item.change_pct is none %}
+      <span class="price">{{ item.close }}</span>
+      <span class="change">데이터 없음</span>
+    {% else %}
+      <span class="price">{{ item.close }}</span>
+      <span class="change">
+        {% if item.change_pct > 0 %}<span class="arrow">▲</span>{% elif item.change_pct < 0 %}<span class="arrow">▼</span>{% else %}<span class="arrow">-</span>{% endif %}
+        {{ '%.2f'|format(item.change_pct|abs) }}%
+      </span>
+    {% endif %}
+  </div>
 </td>

@@ -3,6 +3,7 @@ report:
   language: ko-KR
   decimals: 2
   output_dir: output
+  max_dated_files: 90
 
 markets:
   korea_indices:
