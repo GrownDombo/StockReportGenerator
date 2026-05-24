@@ -53,6 +53,7 @@ def main() -> None:
         "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "kr_indices": fetch_items(config["markets"]["korea_indices"], base_day, decimals),
         "us_indices": fetch_items(config["markets"]["us_indices"], base_day, decimals),
+        "asia_indices": fetch_items(config["markets"].get("asia_indices", []), base_day, decimals),
         "fx": fetch_items(config["assets"]["fx"], base_day, decimals),
         "commodities": fetch_items(config["assets"]["commodities"], base_day, decimals),
     }

@@ -19,6 +19,10 @@ markets:
     - name: IXIC
       display_name: 나스닥 종합
       symbol: IXIC
+    - name: SP500
+      display_name: S&P 500
+      symbol: US500
+  asia_indices:
     - name: SSEC
       display_name: 상해 종합
       symbol: SSEC

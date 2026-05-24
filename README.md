@@ -4,7 +4,8 @@ FinanceDataReader를 사용해 **직전 영업일 기준** 국내/해외 시장 
 
 ## 기능
 - 국내: 코스피, 코스닥
-- 해외: 다우 산업, 나스닥 종합, 상해 종합, 니케이225
+- 미국: 다우 산업, 나스닥 종합, S&P 500
+- 해외(아시아): 상해 종합, 니케이225
 - 환율: 원/달러, 중국 위안/달러
 - 상품: 금, 은, WTI
 - 한국어 숫자 포맷(소수점 2자리)
@@ -35,7 +36,10 @@ python src/main.py
 - 소수점 자리수
 
 ## 자동화
-`.github/workflows/daily-report.yml`이 평일 09:00 KST(=UTC 00:00)에 실행됩니다.
+`.github/workflows/daily-report.yml`은 아래처럼 동작합니다.
+- **테스트 환경(test)**: `push`, `pull_request`, 수동 실행(`workflow_dispatch` + `environment=test`) 시 리포트 생성/검증만 수행
+- **운영 환경(production)**: 평일 09:00 KST 스케줄 또는 수동 실행(`workflow_dispatch` + `environment=prod`) 시 리포트 생성 후 `output/` 자동 커밋
+- **에러 전달**: 실패 시 `failure-logs-<job>-<run_id>` 아티팩트(install/report/verify/commit 로그 + `failure-report.md`)가 생성되며, 이 파일을 Codex에 전달해 원인 분석 가능
 
 ## 주의사항
 - 공휴일 판정은 기본적으로 주말만 제외하도록 구현되어 있습니다.
