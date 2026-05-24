@@ -1,0 +1,163 @@
+name: Daily Stock Report
+
+on:
+  pull_request:
+  push:
+    branches: ["**"]
+  schedule:
+    - cron: '0 0 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "실행 환경 선택 (test/prod)"
+        required: true
+        default: test
+        type: choice
+        options:
+          - test
+          - prod
+      report_date:
+        description: "리포트 기준일 (YYYY-MM-DD, 선택)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  test-report:
+    if: github.event_name == 'pull_request' || github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'test')
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          set -o pipefail
+          python -m pip install --upgrade pip 2>&1 | tee install.log
+          pip install -r requirements.txt 2>&1 | tee -a install.log
+      - name: Generate report (test)
+        run: |
+          set -o pipefail
+          if [ -n "${{ inputs.report_date }}" ]; then
+            python src/main.py --date "${{ inputs.report_date }}" 2>&1 | tee report.log
+          else
+            python src/main.py 2>&1 | tee report.log
+          fi
+      - name: Verify output files
+        run: |
+          set -o pipefail
+          test -f output/latest.html 2>&1 | tee verify.log
+          ls -1 output | head -n 5 2>&1 | tee -a verify.log
+      - name: Collect failure logs
+        if: failure()
+        run: |
+          {
+            echo "# Daily Stock Report 실패 로그"
+            echo "- workflow: ${{ github.workflow }}"
+            echo "- job: ${{ github.job }}"
+            echo "- run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo ""
+            echo "## install.log"
+            [ -f install.log ] && cat install.log || echo "(no install.log)"
+            echo ""
+            echo "## report.log"
+            [ -f report.log ] && cat report.log || echo "(no report.log)"
+            echo ""
+            echo "## verify.log"
+            [ -f verify.log ] && cat verify.log || echo "(no verify.log)"
+          } > failure-report.md
+      - name: Upload failure logs artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-logs-${{ github.job }}-${{ github.run_id }}
+          path: |
+            install.log
+            report.log
+            verify.log
+            failure-report.md
+          if-no-files-found: warn
+      - name: Add failure summary
+        if: failure()
+        run: |
+          echo "## 실패 로그 안내" >> $GITHUB_STEP_SUMMARY
+          echo "에러 로그 아티팩트(failure-logs-...)를 다운로드해 Codex에 그대로 전달하세요." >> $GITHUB_STEP_SUMMARY
+
+  prod-report:
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          set -o pipefail
+          python -m pip install --upgrade pip 2>&1 | tee install.log
+          pip install -r requirements.txt 2>&1 | tee -a install.log
+      - name: Generate report (prod)
+        run: |
+          set -o pipefail
+          if [ -n "${{ inputs.report_date }}" ]; then
+            python src/main.py --date "${{ inputs.report_date }}" 2>&1 | tee report.log
+          else
+            python src/main.py 2>&1 | tee report.log
+          fi
+      - name: Commit updated report
+        run: |
+          set -o pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add output/
+
+          if git diff --staged --quiet; then
+            echo "변경 사항이 없어 커밋/푸시를 생략합니다." | tee commit.log
+            exit 0
+          fi
+
+          git commit -m "chore: update daily stock report" 2>&1 | tee commit.log
+
+          if ! git push 2>&1 | tee -a commit.log; then
+            echo "::error::git push 실패(권한 문제 가능). Repository Settings > Actions > General > Workflow permissions를 'Read and write permissions'로 설정하세요." | tee -a commit.log
+            exit 1
+          fi
+      - name: Collect failure logs
+        if: failure()
+        run: |
+          {
+            echo "# Daily Stock Report 실패 로그"
+            echo "- workflow: ${{ github.workflow }}"
+            echo "- job: ${{ github.job }}"
+            echo "- run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo ""
+            echo "## install.log"
+            [ -f install.log ] && cat install.log || echo "(no install.log)"
+            echo ""
+            echo "## report.log"
+            [ -f report.log ] && cat report.log || echo "(no report.log)"
+            echo ""
+            echo "## commit.log"
+            [ -f commit.log ] && cat commit.log || echo "(no commit.log)"
+          } > failure-report.md
+      - name: Upload failure logs artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-logs-${{ github.job }}-${{ github.run_id }}
+          path: |
+            install.log
+            report.log
+            commit.log
+            failure-report.md
+          if-no-files-found: warn
+      - name: Add failure summary
+        if: failure()
+        run: |
+          echo "## 실패 로그 안내" >> $GITHUB_STEP_SUMMARY
+          echo "에러 로그 아티팩트(failure-logs-...)를 다운로드해 Codex에 그대로 전달하세요." >> $GITHUB_STEP_SUMMARY
