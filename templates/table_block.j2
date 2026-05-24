@@ -1,0 +1,18 @@
+{% set rows = rows if rows is defined else kr_indices %}
+<table>
+  <thead>
+    <tr><th>이름</th><th>종가</th><th>등락률(%)</th><th>거래량</th></tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.name }}</td>
+      <td>{{ r.close }}</td>
+      <td class="{% if r.change_pct is none %}flat{% elif r.change_pct > 0 %}up{% elif r.change_pct < 0 %}down{% else %}flat{% endif %}">
+        {% if r.change_pct is none %}데이터 없음{% else %}{{ '%.2f'|format(r.change_pct) }}{% endif %}
+      </td>
+      <td>{{ r.volume }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
