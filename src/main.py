@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import yaml
 
@@ -101,7 +102,7 @@ def main() -> None:
 
     context = {
         "report_date": base_day.strftime("%Y-%m-%d"),
-        "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "generated_at": datetime.now(ZoneInfo(tz_name)).strftime("%Y-%m-%d %H:%M:%S"),
         "kr_indices": fetch_items(config["markets"]["korea_indices"], base_day, decimals),
         "us_indices": fetch_items(config["markets"]["us_indices"], base_day, decimals),
         "asia_indices": fetch_items(config["markets"].get("asia_indices", []), base_day, decimals),
