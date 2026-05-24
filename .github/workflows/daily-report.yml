@@ -16,6 +16,10 @@ on:
         options:
           - test
           - prod
+      report_date:
+        description: "리포트 기준일 (YYYY-MM-DD, 선택)"
+        required: false
+        type: string
 
 jobs:
   test-report:
@@ -35,7 +39,11 @@ jobs:
       - name: Generate report (test)
         run: |
           set -o pipefail
-          python src/main.py 2>&1 | tee report.log
+          if [ -n "${{ inputs.report_date }}" ]; then
+            python src/main.py --date "${{ inputs.report_date }}" 2>&1 | tee report.log
+          else
+            python src/main.py 2>&1 | tee report.log
+          fi
       - name: Verify output files
         run: |
           set -o pipefail
@@ -93,7 +101,11 @@ jobs:
       - name: Generate report (prod)
         run: |
           set -o pipefail
-          python src/main.py 2>&1 | tee report.log
+          if [ -n "${{ inputs.report_date }}" ]; then
+            python src/main.py --date "${{ inputs.report_date }}" 2>&1 | tee report.log
+          else
+            python src/main.py 2>&1 | tee report.log
+          fi
       - name: Commit updated report
         run: |
           set -o pipefail

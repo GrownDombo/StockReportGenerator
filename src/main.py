@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from datetime import datetime
 from pathlib import Path
 
@@ -8,6 +9,26 @@ import yaml
 from fetchers.market_data import fetch_quote
 from processors.calendar_utils import get_previous_business_day
 from renderers.html_renderer import render_report, save_report
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="주식 시장 HTML 리포트 생성기")
+    parser.add_argument(
+        "--date",
+        dest="report_date",
+        default=None,
+        help="리포트 기준일 (YYYY-MM-DD). 미지정 시 직전 영업일 사용",
+    )
+    return parser.parse_args()
+
+
+def resolve_base_day(report_date: str | None, tz_name: str):
+    if report_date:
+        try:
+            return datetime.strptime(report_date, "%Y-%m-%d").date()
+        except ValueError as exc:
+            raise ValueError("--date 형식은 YYYY-MM-DD 이어야 합니다.") from exc
+    return get_previous_business_day(tz_name).date()
 
 
 def fmt(value: float | None, digits: int = 2) -> str:
@@ -39,6 +60,8 @@ def fetch_items(items: list[dict], base_day, decimals: int) -> list[dict]:
 
 
 def main() -> None:
+    args = parse_args()
+
     config_path = Path("config/markets.yml")
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
 
@@ -46,7 +69,7 @@ def main() -> None:
     tz_name = config["report"].get("timezone", "Asia/Seoul")
     output_dir = config["report"].get("output_dir", "output")
 
-    base_day = get_previous_business_day(tz_name).date()
+    base_day = resolve_base_day(args.report_date, tz_name)
 
     context = {
         "report_date": base_day.strftime("%Y-%m-%d"),

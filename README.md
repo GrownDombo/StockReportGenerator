@@ -23,6 +23,8 @@ pip install -r requirements.txt
 ## 실행
 ```bash
 python src/main.py
+# 특정 날짜 기준 리포트 생성
+python src/main.py --date 2026-05-20
 ```
 
 실행 완료 시 아래 파일이 생성됩니다.
@@ -39,6 +41,7 @@ python src/main.py
 `.github/workflows/daily-report.yml`은 아래처럼 동작합니다.
 - **테스트 환경(test)**: `push`, `pull_request`, 수동 실행(`workflow_dispatch` + `environment=test`) 시 리포트 생성/검증만 수행
 - **운영 환경(production)**: 평일 09:00 KST 스케줄 또는 수동 실행(`workflow_dispatch` + `environment=prod`) 시 리포트 생성 후 `output/` 자동 커밋
+- **날짜 지정 실행**: Run workflow에서 `report_date`(YYYY-MM-DD)를 입력하면 해당 날짜 기준으로 리포트 생성/커밋 가능
 - **에러 전달**: 실패 시 `failure-logs-<job>-<run_id>` 아티팩트(install/report/verify/commit 로그 + `failure-report.md`)가 생성되며, 이 파일을 Codex에 전달해 원인 분석 가능
 
 ## 주의사항
