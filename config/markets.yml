@@ -7,28 +7,45 @@ report:
 markets:
   korea_indices:
     - name: KOSPI
+      display_name: 코스피
       symbol: KS11
     - name: KOSDAQ
+      display_name: 코스닥
       symbol: KQ11
   us_indices:
-    - name: S&P 500
-      symbol: US500
-    - name: NASDAQ
-      symbol: IXIC
-    - name: DOW JONES
+    - name: DJI
+      display_name: 다우 산업
       symbol: DJI
+    - name: IXIC
+      display_name: 나스닥 종합
+      symbol: IXIC
+    - name: SSEC
+      display_name: 상해 종합
+      symbol: SSEC
+    - name: NIKKEI
+      display_name: 니케이225
+      symbol: N225
 
 assets:
   fx:
     - name: USD/KRW
+      display_name: 원/달러
       symbol: USD/KRW
+    - name: CNY/KRW
+      display_name: 중국 위안/달러
+      symbol: CNY/KRW
   rates:
     - name: 미국 10년 국채금리
       symbol: US10YT=X
   commodities:
-    - name: 금 선물
+    - name: Gold
+      display_name: 금
       symbol: GC=F
-    - name: WTI 유가
+    - name: Silver
+      display_name: 은
+      symbol: SI=F
+    - name: WTI
+      display_name: WTI
       symbol: CL=F
 
 stocks:
