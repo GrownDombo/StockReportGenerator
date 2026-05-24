@@ -21,6 +21,9 @@ on:
         required: false
         type: string
 
+permissions:
+  contents: write
+
 jobs:
   test-report:
     if: github.event_name == 'pull_request' || github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'test')
@@ -112,7 +115,18 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add output/
-          git diff --staged --quiet || (git commit -m "chore: update daily stock report" && git push) 2>&1 | tee commit.log
+
+          if git diff --staged --quiet; then
+            echo "변경 사항이 없어 커밋/푸시를 생략합니다." | tee commit.log
+            exit 0
+          fi
+
+          git commit -m "chore: update daily stock report" 2>&1 | tee commit.log
+
+          if ! git push 2>&1 | tee -a commit.log; then
+            echo "::error::git push 실패(권한 문제 가능). Repository Settings > Actions > General > Workflow permissions를 'Read and write permissions'로 설정하세요." | tee -a commit.log
+            exit 1
+          fi
       - name: Collect failure logs
         if: failure()
         run: |
