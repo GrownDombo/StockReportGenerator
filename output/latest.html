@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>전일 시장 요약</title>
+  <style>
+    :root {
+      --bg: #f3f5f8;
+      --card: #ffffff;
+      --line: #e6e9ee;
+      --line-strong: #cfd6df;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --up: #d14b45;
+      --down: #2f7dbd;
+      --shadow: 0 8px 20px rgba(17, 24, 39, 0.06);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: linear-gradient(180deg, #f8fafc 0%, #f3f5f8 100%);
+      color: var(--text);
+      font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
+    }
+
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid #edf1f5;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    h1 { font-size: 38px; margin: 0; font-weight: 800; letter-spacing: -0.03em; }
+    .meta { margin-top: 8px; font-size: 14px; color: var(--muted); }
+
+    .grid { margin-top: 18px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+
+    .section { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+    .section h2 { margin: 0; padding: 12px 14px; font-size: 21px; font-weight: 800; border-bottom: 1px solid var(--line); background: #fafbfd; letter-spacing: -0.02em; }
+
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; border-top: 2px solid var(--line-strong); }
+    td { border: 1px solid var(--line); text-align: center; padding: 10px 8px; vertical-align: middle; }
+
+    .name { font-size: 18px; font-weight: 700; color: #374151; background: #fbfcfd; line-height: 1.2; word-break: keep-all; }
+
+    .value { padding: 8px 6px; }
+    .value-inner {
+      min-height: 62px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      overflow: hidden;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .price {
+      display: block;
+      width: 100%;
+      font-size: clamp(24px, 3vw, 36px);
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .change {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: clamp(14px, 1.8vw, 19px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+
+    .cols-3 .price { font-size: clamp(19px, 2.2vw, 28px); }
+    .cols-3 .change { font-size: clamp(12px, 1.4vw, 16px); }
+
+    .arrow { font-size: 0.85em; }
+    .up { color: var(--up); }
+    .down { color: var(--down); }
+    .flat { color: #8b95a1; }
+
+    .full { grid-column: 1 / -1; }
+    .commodity .name { width: 32%; }
+    .commodity .value { width: 68%; }
+
+    @media (max-width: 900px) {
+      body { padding: 14px; }
+      .wrap { padding: 14px; border-radius: 12px; }
+      h1 { font-size: 30px; }
+      .grid { grid-template-columns: 1fr; gap: 12px; }
+      .section h2 { font-size: 19px; }
+      .name { font-size: 16px; }
+      .value-inner { min-height: 56px; }
+      .price { font-size: 24px; }
+      .cols-3 .price { font-size: 20px; }
+      .change { font-size: 14px; }
+      .cols-3 .change { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>전일 시장 요약</h1>
+    <div class="meta">기준일 2026-05-20 · 생성시각 2026-05-24 23:32:07</div>
+
+    <div class="grid">
+      <section class="section"><h2>국내</h2><table class="cols-2"><tr><td class="name">코스피</td><td class="name">코스닥</td></tr><tr><td class="value down">
+  <div class="value-inner">
+    
+      <span class="price">7,208.95</span>
+      <span class="change">
+        <span class="arrow">▼</span>
+        0.86%
+      </span>
+    
+  </div>
+</td><td class="value down">
+  <div class="value-inner">
+    
+      <span class="price">1,056.07</span>
+      <span class="change">
+        <span class="arrow">▼</span>
+        2.61%
+      </span>
+    
+  </div>
+</td></tr></table></section>
+
+      <section class="section"><h2>환율</h2><table class="cols-2"><tr><td class="name">원/달러</td><td class="name">위안/원</td></tr><tr><td class="value up">
+  <div class="value-inner">
+    
+      <span class="price">1,507.85</span>
+      <span class="change">
+        <span class="arrow">▲</span>
+        1.04%
+      </span>
+    
+  </div>
+</td><td class="value flat">
+  <div class="value-inner">
+    
+      <span class="price">데이터 없음</span>
+      <span class="change">데이터 없음</span>
+    
+  </div>
+</td></tr></table></section>
+
+      <section class="section"><h2>미국</h2><table class="cols-3"><tr><td class="name">다우 산업</td><td class="name">나스닥 종합</td><td class="name">S&P 500</td></tr><tr><td class="value down">
+  <div class="value-inner">
+    
+      <span class="price">49,363.88</span>
+      <span class="change">
+        <span class="arrow">▼</span>
+        0.65%
+      </span>
+    
+  </div>
+</td><td class="value down">
+  <div class="value-inner">
+    
+      <span class="price">25,870.71</span>
+      <span class="change">
+        <span class="arrow">▼</span>
+        0.84%
+      </span>
+    
+  </div>
+</td><td class="value down">
+  <div class="value-inner">
+    
+      <span class="price">7,353.61</span>
+      <span class="change">
+        <span class="arrow">▼</span>
+        0.67%
+      </span>
+    
+  </div>
+</td></tr></table></section>
+
+      <section class="section"><h2>해외(아시아)</h2><table class="cols-2"><tr><td class="name">상해 종합</td><td class="name">니케이225</td></tr><tr><td class="value up">
+  <div class="value-inner">
+    
+      <span class="price">4,169.54</span>
+      <span class="change">
+        <span class="arrow">▲</span>
+        0.92%
+      </span>
+    
+  </div>
+</td><td class="value down">
+  <div class="value-inner">
+    
+      <span class="price">59,804.41</span>
+      <span class="change">
+        <span class="arrow">▼</span>
+        1.23%
+      </span>
+    
+  </div>
+</td></tr></table></section>
+
+      <section class="section commodity full"><h2>상품</h2><table class="cols-2"><tr><td class="name">금</td><td class="value down">
+  <div class="value-inner">
+    
+      <span class="price">4,506.30</span>
+      <span class="change">
+        <span class="arrow">▼</span>
+        1.01%
+      </span>
+    
+  </div>
+</td></tr><tr><td class="name">은</td><td class="value down">
+  <div class="value-inner">
+    
+      <span class="price">74.83</span>
+      <span class="change">
+        <span class="arrow">▼</span>
+        2.91%
+      </span>
+    
+  </div>
+</td></tr><tr><td class="name">WTI</td><td class="value down">
+  <div class="value-inner">
+    
+      <span class="price">107.77</span>
+      <span class="change">
+        <span class="arrow">▼</span>
+        0.82%
+      </span>
+    
+  </div>
+</td></tr></table></section>
+    </div>
+  </main>
+</body>
+</html>
