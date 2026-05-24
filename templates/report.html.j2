@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>전일 시장 요약 리포트</title>
+  <style>
+    body {font-family: Arial, sans-serif; margin: 20px; background: #f7f9fc; color: #1f2937;}
+    h1,h2 {margin: 8px 0;}
+    .meta {color: #6b7280; margin-bottom: 14px;}
+    .grid {display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;}
+    .card {background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.07);}
+    table {width:100%; border-collapse: collapse; font-size: 14px;}
+    th,td {padding: 7px; border-bottom: 1px solid #e5e7eb; text-align: right;}
+    th:first-child, td:first-child {text-align:left;}
+    .up {color: #dc2626; font-weight:700;}
+    .down {color:#2563eb; font-weight:700;}
+    .flat {color:#6b7280; font-weight:700;}
+  </style>
+</head>
+<body>
+  <h1>전일 시장 요약 리포트</h1>
+  <div class="meta">기준일: {{ report_date }} | 생성시각: {{ generated_at }}</div>
+
+  <div class="grid">
+    <div class="card"><h2>국내 지수</h2>{% include 'table_block.j2' with context %}</div>
+    <div class="card"><h2>미국 지수</h2>{% set rows = us_indices %}{% include 'table_block.j2' %}</div>
+    <div class="card"><h2>환율/금리/원자재</h2>
+      {% set rows = fx + rates + commodities %}{% include 'table_block.j2' %}
+    </div>
+    <div class="card"><h2>국내 Top 상승</h2>{% set rows = kr_gainers %}{% include 'table_block.j2' %}</div>
+    <div class="card"><h2>국내 Top 하락</h2>{% set rows = kr_losers %}{% include 'table_block.j2' %}</div>
+    <div class="card"><h2>미국 Top 상승</h2>{% set rows = us_gainers %}{% include 'table_block.j2' %}</div>
+    <div class="card"><h2>미국 Top 하락</h2>{% set rows = us_losers %}{% include 'table_block.j2' %}</div>
+  </div>
+</body>
+</html>
