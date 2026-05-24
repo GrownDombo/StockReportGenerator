@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>전일 시장 요약</title>
+  <style>
+    :root { --bg:#f7f7f8; --line:#d7d7d9; --line-strong:#b9b9bd; --text:#222; --muted:#666; --up:#cf5e53; --down:#4d87b8; }
+    * { box-sizing: border-box; }
+    body { margin:0; padding:20px; background:var(--bg); color:var(--text); font-family:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",Arial,sans-serif; }
+    .wrap { max-width:720px; margin:0 auto; background:#fff; padding:18px 22px 26px; border:1px solid #ececef; }
+    h1 { font-size:50px; margin:0 0 4px; font-weight:800; letter-spacing:-0.03em; }
+    .meta { font-size:15px; color:var(--muted); margin-bottom:10px; }
+    .section { margin-top:20px; }
+    .section h2 { margin:0; font-size:42px; font-weight:800; letter-spacing:-0.03em; }
+    table { width:100%; border-collapse:collapse; table-layout:fixed; margin-top:6px; border-top:3px solid var(--line-strong); }
+    td { border:1px solid var(--line); text-align:center; padding:14px 8px; font-size:18px; }
+    .name { background:#fafafa; font-size:40px; font-weight:700; color:#333; letter-spacing:-0.02em; }
+    .value { font-size:44px; font-weight:700; letter-spacing:-0.02em; white-space:nowrap; }
+    .value .arrow { font-size:28px; vertical-align:10%; margin:0 2px; }
+    .up { color:var(--up); } .down { color:var(--down); } .flat { color:#777; }
+    .commodity .name { width:30%; } .commodity .value { width:70%; }
+    @media (max-width:900px){ h1{font-size:34px;} .section h2{font-size:30px;} .name{font-size:26px;} .value{font-size:30px;} .value .arrow{font-size:20px;} }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>전일 시장 요약</h1>
+    <div class="meta">기준일 {{ report_date }} · 생성시각 {{ generated_at }}</div>
+
+    <section class="section"><h2>국내</h2><table><tr>{% for item in kr_indices[:2] %}<td class="name">{{ item.name_ko }}</td>{% endfor %}</tr><tr>{% for item in kr_indices[:2] %}{% include 'value_cell.j2' %}{% endfor %}</tr></table></section>
+
+    <section class="section"><h2>미국</h2><table><tr>{% for item in us_indices[:3] %}<td class="name">{{ item.name_ko }}</td>{% endfor %}</tr><tr>{% for item in us_indices[:3] %}{% include 'value_cell.j2' %}{% endfor %}</tr></table></section>
+
+    <section class="section"><h2>해외(아시아)</h2><table><tr>{% for item in asia_indices[:2] %}<td class="name">{{ item.name_ko }}</td>{% endfor %}</tr><tr>{% for item in asia_indices[:2] %}{% include 'value_cell.j2' %}{% endfor %}</tr></table></section>
+
+    <section class="section"><h2>환율</h2><table><tr>{% for item in fx[:2] %}<td class="name">{{ item.name_ko }}</td>{% endfor %}</tr><tr>{% for item in fx[:2] %}{% include 'value_cell.j2' %}{% endfor %}</tr></table></section>
+
+    <section class="section commodity"><h2>상품</h2><table>{% for item in commodities %}<tr><td class="name">{{ item.name_ko }}</td>{% include 'value_cell.j2' %}</tr>{% endfor %}</table></section>
+  </main>
+</body>
+</html>
