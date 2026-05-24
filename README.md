@@ -46,7 +46,7 @@ python src/main.py --date 2026-05-20
 - **운영 환경(production)**: 평일 09:00 KST 스케줄 또는 수동 실행(`workflow_dispatch` + `environment=prod`) 시 리포트 생성 후 `output/` 자동 커밋
 - **날짜 지정 실행**: Run workflow에서 `report_date`(YYYY-MM-DD)를 입력하면 해당 날짜 기준으로 리포트 생성/커밋 가능
 - **에러 전달**: 실패 시 `failure-logs-<job>-<run_id>` 아티팩트(install/report/verify/commit 로그 + `failure-report.md`)가 생성되며, 이 파일을 Codex에 전달해 원인 분석 가능
-- **권한 설정(중요)**: 자동 커밋/푸시를 위해 저장소 `Settings > Actions > General > Workflow permissions`를 **Read and write permissions**로 설정해야 합니다.
+- **권한 설정(중요)**: 보안을 위해 `test-report`는 read-only 토큰을 사용하고, `prod-report`만 write 토큰을 사용합니다. 자동 커밋/푸시를 위해 저장소 `Settings > Actions > General > Workflow permissions`를 **Read and write permissions**로 설정해야 합니다.
 
 ## 주의사항
 - 공휴일 판정은 기본적으로 주말만 제외하도록 구현되어 있습니다.

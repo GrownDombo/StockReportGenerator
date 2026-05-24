@@ -21,11 +21,10 @@ on:
         required: false
         type: string
 
-permissions:
-  contents: write
-
 jobs:
   test-report:
+    permissions:
+      contents: read
     if: github.event_name == 'pull_request' || github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'test')
     runs-on: ubuntu-latest
     environment: test
@@ -88,6 +87,8 @@ jobs:
           echo "에러 로그 아티팩트(failure-logs-...)를 다운로드해 Codex에 그대로 전달하세요." >> $GITHUB_STEP_SUMMARY
 
   prod-report:
+    permissions:
+      contents: write
     if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'prod')
     runs-on: ubuntu-latest
     environment: production
