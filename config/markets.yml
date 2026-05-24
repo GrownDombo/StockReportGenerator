@@ -37,7 +37,7 @@ assets:
       display_name: 원/달러
       symbol: USD/KRW
     - name: CNY/KRW
-      display_name: 중국 위안/달러
+      display_name: 위안/원
       symbol: CNY/KRW
   rates:
     - name: 미국 10년 국채금리
